@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "snacksdistributionwholesale",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": false },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "snacksdistributionwholesale", "database_id": "5ee133a8-d1d4-4b30-90f6-5f583bc1df94", "migrations_dir": "migrations" }
+  ],
+  "vars": {
+    "SALES_EMAIL": "sales@snacksdistributionwholesale.com",
+    "EMAIL_FROM": "Snacks Distribution Wholesale <orders@snacksdistributionwholesale.com>"
+  },
+  "observability": { "enabled": true }
+}
