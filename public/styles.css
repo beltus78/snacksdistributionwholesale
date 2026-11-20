@@ -198,3 +198,8 @@ top:calc(8% + (var(--p) - .5) * (var(--p) - .5) * 4 * 34vh);background:radial-gr
 .form-grid{grid-template-columns:1fr}.line{grid-template-columns:1fr 70px}.line>b{grid-column:1}.line .x{grid-column:2}
 .sec{padding-top:64px;padding-bottom:64px}.bar-txt{font-size:.8rem}.pdp-buy{grid-template-columns:1fr}.tile{flex-basis:168px}.ft-grid,.states,.process,.dark .why{grid-template-columns:1fr}.facts-row b{font-size:2rem}}
 @media (prefers-reduced-motion:reduce){.story{height:auto}.story-stage{position:relative;height:auto;min-height:100vh}.chap{position:relative;top:auto;translate:none;margin-bottom:40px}.chap+.chap{display:none}.story-hint{display:none}.fly{opacity:1!important}}
+/* buyer guides */
+.prose ul,.prose ol{color:var(--ink2);padding-left:1.3em;margin:0 0 1.2em;font-size:1.06rem}.prose li{margin:.35em 0}
+.prose h3{font-size:1.25rem;margin:1.5em 0 .4em}.prose a:not(.btn){color:var(--ochre2);text-decoration:underline;text-underline-offset:3px}
+.prose .lead{font-size:1.2rem;color:var(--ink)}.guide-item{padding:22px 0;border-bottom:1px solid var(--line)}.guide-item h2{margin:.2em 0 .4em}.guide-item h2 a{color:var(--ink)!important;text-decoration:none!important}
+.pagehead .kicker a{color:inherit}

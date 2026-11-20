@@ -25,3 +25,12 @@ Resend → Domains → add the domain, add its DNS records in Cloudflare. Mailbo
 - Products: `src/data-products.json` built by `python3 tools/build_data.py tools/catalogue-review.json` from the review sheet (Include = Yes rows). Prices are estimates already cut by 25% — replace with real buy prices. No product photos yet: each product shows a designed label card (`label()` in `src/html.ts`).
 
 Change code, push to `main` (auto-deploy) or run `bash deploy.sh`. Live logs: `npx wrangler tail`.
+
+## SEO (automated tasks run on this repo)
+- Deploys from `main` (Cloudflare Workers Builds). There is no `cloudflare` branch here.
+- Buyer guides: `src/guides.ts` (format notes at the top), at `/guides/<slug>`. New guides: append to `GUIDES` with `published: "YYYY-MM-DD"`. Australian English, Australian buyers only (every state and territory).
+- Real internal URLs: `/`, `/shop`, `/c/<category>` (slugs in `src/catalog.ts` CATEGORIES), `/p/<product>` (slugs in `src/data-products.json`), `/brands`, `/brand/<slug>`, `/wholesale/<state or city slug>` (STATES / CITIES in `src/catalog.ts`), `/delivery`, `/compliance`, `/how-to-order`, `/about`, `/contact`, `/signup`, `/guides`.
+- Prices are only visible after free signup — never write prices in guides or meta text. `/cart` and `/login` are noindex/disallowed on purpose.
+- Sitemap lastmod: bump `CONTENT_UPDATED` in `src/index.ts` when site-wide content changes.
+- Log every SEO change in `seo/log.md`. IndexNow key: `2fdb2b6ee3092ca351f4f729bdbb6936` (file in `public/`).
+- Never: change order rules, payment limits, contact/company details or URLs; never invent statistics, reviews or regulatory claims.

@@ -2,6 +2,7 @@ import { BRANDS, BY_SLUG, CATEGORIES, CITIES, MAX_PAY_DAYS, MIN_CASES, PAYID_MAX
 import { checkPassword, clearCookie, createSession, currentBuyer, endSession, formatAbn, hashPassword, validAbn, type Buyer } from "./auth";
 import { esc, layout, type Ctx, type Page } from "./html";
 import * as P from "./pages";
+import { GUIDES } from "./guides";
 
 export interface Env {
   ASSETS: Fetcher;
@@ -13,6 +14,7 @@ export interface Env {
   TURNSTILE_SECRET?: string;
   CF_BEACON_TOKEN?: string;
   GOOGLE_SITE_VERIFICATION?: string;
+  BING_SITE_VERIFICATION?: string;
 }
 
 const json = (data: unknown, status = 200, headers: Record<string, string> = {}) =>
@@ -37,7 +39,7 @@ export default {
     if (/\.[a-z0-9]+$/i.test(path)) return env.ASSETS.fetch(req);
 
     const buyer = await currentBuyer(req, env.DB);
-    const ctx: Ctx = { buyer, url, turnstile: env.TURNSTILE_SITE_KEY, beacon: env.CF_BEACON_TOKEN, gsc: env.GOOGLE_SITE_VERIFICATION };
+    const ctx: Ctx = { buyer, url, turnstile: env.TURNSTILE_SITE_KEY, beacon: env.CF_BEACON_TOKEN, gsc: env.GOOGLE_SITE_VERIFICATION, bing: env.BING_SITE_VERIFICATION };
     if ((path === "/signup" || path === "/login") && buyer) return Response.redirect(new URL(url.searchParams.get("next")?.startsWith("/") ? url.searchParams.get("next")! : "/shop", url).toString(), 302);
     const page = route(ctx, path) ?? P.notFound(ctx);
     return new Response(layout(ctx, page), {
@@ -67,22 +69,26 @@ function route(ctx: Ctx, path: string): Page | null {
     case "/how-to-order": return P.howToOrder();
     case "/terms": return P.terms();
     case "/privacy": return P.privacy();
+    case "/guides": return P.guides();
     case "/thanks": return P.thanks((ctx.url.searchParams.get("n") ?? "").replace(/[^A-Z0-9-]/g, "").slice(0, 30));
   }
   let m;
   if ((m = path.match(/^\/c\/([a-z0-9-]+)$/))) return P.category(ctx, m[1]!);
   if ((m = path.match(/^\/p\/([a-z0-9-]+)$/))) return P.product(ctx, m[1]!);
   if ((m = path.match(/^\/brand\/([a-z0-9-]+)$/))) return P.brand(ctx, m[1]!);
+  if ((m = path.match(/^\/guides\/([a-z0-9-]+)$/))) return P.guide(m[1]!);
   if ((m = path.match(/^\/wholesale\/([a-z-]+)$/))) return P.statePage(ctx, m[1]!);
   return null;
 }
 
+// Bump when site-wide page content changes (lastmod must be truthful or Google ignores it).
+const CONTENT_UPDATED = "2026-11-20";
 function sitemap() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = CONTENT_UPDATED;
   const paths = ["/", "/shop", "/brands", "/delivery", "/compliance", "/about", "/how-to-order", "/contact", "/signup",
     ...CATEGORIES.map((c) => `/c/${c.slug}`), ...BRANDS.map((b) => `/brand/${b.slug}`),
-    ...STATES.map((s) => `/wholesale/${s.slug}`), ...CITIES.map((c) => `/wholesale/${c.slug}`), ...PRODUCTS.map((p) => `/p/${p.slug}`)];
-  const xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((p) => `<url><loc>${SITE.url}${p}</loc><lastmod>${today}</lastmod></url>`).join("")}</urlset>`;
+    ...STATES.map((s) => `/wholesale/${s.slug}`), ...CITIES.map((c) => `/wholesale/${c.slug}`), ...PRODUCTS.map((p) => `/p/${p.slug}`), "/guides"];
+  const xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((p) => `<url><loc>${SITE.url}${p}</loc><lastmod>${today}</lastmod></url>`).join("")}${GUIDES.map((g) => `<url><loc>${SITE.url}/guides/${g.slug}</loc><lastmod>${g.updated ?? g.published}</lastmod></url>`).join("")}</urlset>`;
   return new Response(xml, { headers: { "content-type": "application/xml", "cache-control": "public, max-age=3600" } });
 }
 

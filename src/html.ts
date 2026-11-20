@@ -4,11 +4,15 @@ import type { Buyer } from "./auth";
 export const esc = (v: unknown) =>
   String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
-export type Ctx = { buyer: Buyer | null; url: URL; turnstile?: string; beacon?: string; gsc?: string };
+export type Ctx = { buyer: Buyer | null; url: URL; turnstile?: string; beacon?: string; gsc?: string; bing?: string };
 export type Page = {
   path: string; title: string; description: string; body: string;
   image?: string; jsonLd?: object[]; noindex?: boolean; scriptData?: Record<string, unknown>; hideBar?: boolean; status?: number;
+  ogType?: string; /** Use title as-is (no " | site name" suffix). */ rawTitle?: boolean;
 };
+
+/** Hides "[placeholder]" company details on public pages until the real ones are filled in. */
+export const shown = (s: string) => (s.includes("[") ? "" : s);
 
 export const LOGO = `<span class="mark"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#C4501E"/><circle cx="20" cy="23" r="9" fill="#F2B33D"/><path d="M1.5 25h37v14h-37z" fill="#23402F"/><path d="M20 25 13 39h14z" fill="#1D1A16"/><path d="M20 27v2.5M20 32v3" stroke="#F4EBDD" stroke-width="1.4" stroke-linecap="round"/></svg><span class="mark-t"><b>Snacks Distribution</b><small>Wholesale · Australia</small></span></span>`;
 
@@ -36,20 +40,22 @@ export function productTile(ctx: Ctx, p: Product) {
 
 export function layout(ctx: Ctx, pg: Page) {
   const url = SITE.url + pg.path;
-  const title = pg.title.includes(SITE.name) ? pg.title : `${pg.title} | ${SITE.name}`;
+  const title = pg.rawTitle || pg.title.includes(SITE.name) || pg.title.length + SITE.name.length + 3 > 65 ? pg.title : `${pg.title} | ${SITE.name}`;
   const image = pg.image ?? `${SITE.url}/og-default.jpg`;
-  const nav: [string, string][] = [["/shop", "Shop"], ["/brands", "Brands"], ["/delivery", "Delivery"], ["/compliance", "Compliance"], ["/about", "About"], ["/contact", "Contact"]];
+  // Meta description: max 160 chars, cut at a word boundary.
+  pg = { ...pg, description: pg.description.length <= 160 ? pg.description : pg.description.slice(0, 159).replace(/\s+\S*$/, "") + "…" };
+  const nav: [string, string][] = [["/shop", "Shop"], ["/brands", "Brands"], ["/delivery", "Delivery"], ["/compliance", "Compliance"], ["/guides", "Guides"], ["/contact", "Contact"]];
   const b = ctx.buyer;
   return `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(pg.description)}">
 ${pg.noindex ? `<meta name="robots" content="noindex">` : `<link rel="canonical" href="${url}"><link rel="alternate" hreflang="en-AU" href="${url}"><link rel="alternate" hreflang="x-default" href="${url}">`}
-<meta name="geo.region" content="AU"><meta property="og:site_name" content="${SITE.name}"><meta property="og:type" content="website"><meta property="og:locale" content="en_AU">
+<meta name="geo.region" content="AU"><meta property="og:site_name" content="${SITE.name}"><meta property="og:type" content="${pg.ogType ?? "website"}"><meta property="og:locale" content="en_AU">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(pg.description)}"><meta property="og:url" content="${url}"><meta property="og:image" content="${esc(image)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#F4EBDD"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
-${ctx.gsc ? `<meta name="google-site-verification" content="${esc(ctx.gsc)}">` : ""}
+${ctx.gsc ? `<meta name="google-site-verification" content="${esc(ctx.gsc)}">` : ""}${ctx.bing ? `<meta name="msvalidate.01" content="${esc(ctx.bing)}">` : ""}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap">
-<link rel="stylesheet" href="/styles.css?v=1">
+<link rel="stylesheet" href="/styles.css?v=2">
 ${(pg.jsonLd ?? []).map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, "\\u003c")}</script>`).join("")}
 </head><body>
 <div class="util"><div class="wrap util-in"><span>Trade only · ABN required · Prices in AUD ex GST</span><span class="util-r">Delivering to every state &amp; territory · Min. ${MIN_CASES / 50} pallets</span></div></div>
@@ -64,10 +70,10 @@ ${pg.hideBar || !b ? "" : `<div class="bar" data-bar hidden><div class="wrap bar
 <footer class="ft"><svg class="ft-ridge" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 120V70L90 48 160 66 270 26 360 56 500 10 580 36 700 2 810 46 900 26 1030 56 1150 16 1260 44 1340 32 1440 50V120Z" fill="#1D1A16"/></svg><div class="wrap">
 <p class="ft-big" data-split>From the docks to your shelves — imported snacks for Australian stores.</p>
 <div class="ft-grid">
-<div>${LOGO}<p class="small">${esc(SITE.company)}<br>${esc(SITE.abn)}<br>${esc(SITE.address1)}<br>${esc(SITE.address2)}<br><a href="mailto:${SITE.email}">${SITE.email}</a>${SITE.phone ? `<br><a href="tel:${SITE.phone.replace(/\s/g, "")}">${esc(SITE.phone)}</a>` : ""}</p></div>
+<div>${LOGO}<p class="small">${[SITE.company, SITE.abn, SITE.address1, SITE.address2].map(shown).filter(Boolean).map((x) => `${esc(x)}<br>`).join("")}<a href="mailto:${SITE.email}">${SITE.email}</a>${SITE.phone ? `<br><a href="tel:${SITE.phone.replace(/\s/g, "")}">${esc(SITE.phone)}</a>` : ""}</p></div>
 <div><h4>Shop</h4>${CATEGORIES.map((c) => `<a href="/c/${c.slug}">${esc(c.name)}</a>`).join("")}</div>
 <div><h4>We deliver to</h4>${STATES.map((s) => `<a href="/wholesale/${s.slug}">${esc(s.name)}</a>`).join("")}</div>
-<div><h4>Company</h4><a href="/about">About</a><a href="/delivery">Delivery &amp; freight</a><a href="/compliance">Food compliance</a><a href="/how-to-order">How to order</a><a href="/contact">Contact</a><a href="/terms">Terms of trade</a><a href="/privacy">Privacy</a></div>
+<div><h4>Company</h4><a href="/about">About</a><a href="/delivery">Delivery &amp; freight</a><a href="/compliance">Food compliance</a><a href="/how-to-order">How to order</a><a href="/guides">Buyer guides</a><a href="/contact">Contact</a><a href="/terms">Terms of trade</a><a href="/privacy">Privacy</a></div>
 </div><p class="small ft-copy">© ${new Date().getUTCFullYear()} ${SITE.name}. Wholesale to registered Australian businesses only. All prices AUD excluding GST.</p></div></footer>
 <script>window.__MIN=${MIN_CASES};window.__IN=${b ? 1 : 0};${pg.scriptData ? `window.__D=${JSON.stringify(pg.scriptData).replace(/</g, "\\u003c")};` : ""}</script>
 <script src="/app.js?v=1" defer></script><script src="/motion.js?v=1" defer></script>

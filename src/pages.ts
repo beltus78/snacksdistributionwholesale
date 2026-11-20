@@ -2,7 +2,8 @@ import {
   BRAND, BRANDS, BY_SLUG, CAT, CATEGORIES, CITIES, MAX_PAY_DAYS, MIN_CASES, PAYID_MAX, PAYPAL_MAX, PRODUCTS, SITE, STATES,
   aud, countByCat, unitText, type Product,
 } from "./catalog";
-import { esc, label, productRow, productTile, stepper, type Ctx, type Page } from "./html";
+import { esc, label, productRow, productTile, shown, stepper, type Ctx, type Page } from "./html";
+import { GUIDE_BY, guidesNewestFirst, renderMd } from "./guides";
 
 const N = PRODUCTS.length;
 const fmtN = (n: number) => n.toLocaleString("en-AU");
@@ -345,7 +346,7 @@ export const about = () => textPage("/about", "About Snacks Distribution Wholesa
 
 export const howToOrder = () => textPage("/how-to-order", "How to order", "Ordering", [
   ...steps.flatMap(([a, b], i) => [`## ${i + 1}. ${a}`, b]),
-], { title: "How to Order Wholesale Snacks — 5 Steps" });
+], { title: "How to Order Wholesale Snacks — 5 Steps", desc: "How to order imported snacks wholesale in Australia: free ABN signup, fill five mixed pallets, send your quote, confirm freight and pay within 3 days." });
 
 export const contact = (ctx: Ctx): Page => ({
   path: "/contact", title: "Contact", description: `Questions about wholesale imported snacks in Australia? Email ${SITE.email}.`, jsonLd: [org()],
@@ -355,7 +356,7 @@ ${field("name", "Your name")}${field("email", "Email", "email")}${field("busines
 <label class="field wide"><span>Message *</span><textarea name="message" required maxlength="3000" rows="6"></textarea></label>
 <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">${turnstile(ctx)}</div>
 <p class="error" data-error role="alert" hidden></p><button class="btn" type="submit">Send message →</button></form>
-<div class="card pad"><h3>${SITE.name}</h3><p>${esc(SITE.company)}<br>${esc(SITE.abn)}<br>${esc(SITE.address1)}<br>${esc(SITE.address2)}</p><p><a href="mailto:${SITE.email}">${SITE.email}</a>${SITE.phone ? `<br><a href="tel:${SITE.phone.replace(/\s/g, "")}">${esc(SITE.phone)}</a>` : ""}</p></div></section>`,
+<div class="card pad"><h3>${SITE.name}</h3>${[SITE.company, SITE.abn, SITE.address1, SITE.address2].map(shown).some(Boolean) ? `<p>${[SITE.company, SITE.abn, SITE.address1, SITE.address2].map(shown).filter(Boolean).map(esc).join("<br>")}</p>` : ""}<p><a href="mailto:${SITE.email}">${SITE.email}</a>${SITE.phone ? `<br><a href="tel:${SITE.phone.replace(/\s/g, "")}">${esc(SITE.phone)}</a>` : ""}</p></div></section>`,
 });
 
 export const terms = () => textPage("/terms", "Terms of trade", "Legal", [
@@ -412,3 +413,31 @@ export const notFound = (ctx: Ctx): Page => ({
   path: "/404", title: "Page not found", description: "Page not found", noindex: true, status: 404,
   body: `<section class="wrap section center"><div class="sunmark" aria-hidden="true"></div><h1 class="h-xl">This road doesn't go anywhere.</h1><p class="lead">Try the order sheet or search for a brand.</p><form action="/shop" class="search-big"><input type="search" name="q" placeholder="Takis, Arizona, Warheads…" aria-label="Search"><button class="btn">Search</button></form></section>`,
 });
+
+// ---------- buyer guides ----------
+const fmtDate = (d: string) => new Date(d + "T12:00:00Z").toLocaleDateString("en-AU", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+export function guides(): Page {
+  const list = guidesNewestFirst();
+  return {
+    path: "/guides", title: "Wholesale Snack Buying Guides for Australian Stores",
+    description: "Practical guides for Australian retailers buying imported snacks and drinks wholesale: ordering, GST, freight, compliance and building a range that sells.",
+    jsonLd: [org(), crumbs([["Home", "/"], ["Guides"]])],
+    body: `<section class="pagehead"><div class="wrap"><p class="kicker">Buyer guides</p><h1 data-split>Wholesale snack buying guides</h1></div></section>
+<section class="wrap section prose guide-list">${list.map((g) => `<article class="guide-item"><p class="small">${fmtDate(g.updated ?? g.published)}</p><h2><a href="/guides/${g.slug}">${esc(g.title)}</a></h2><p>${esc(g.excerpt)}</p><p><a href="/guides/${g.slug}">Read the guide →</a></p></article>`).join("")}</section>`,
+  };
+}
+export function guide(slug: string): Page | null {
+  const g = GUIDE_BY.get(slug);
+  if (!g) return null;
+  const url = `${SITE.url}/guides/${g.slug}`;
+  const more = guidesNewestFirst().filter((x) => x.slug !== g.slug).slice(0, 3);
+  return {
+    path: `/guides/${g.slug}`, ogType: "article", rawTitle: !!g.seoTitle, title: g.seoTitle ?? g.title, description: g.description,
+    jsonLd: [
+      { "@context": "https://schema.org", "@type": "Article", headline: g.title, description: g.description, datePublished: g.published, dateModified: g.updated ?? g.published, inLanguage: "en-AU", mainEntityOfPage: url, image: `${SITE.url}/og-default.jpg`, author: { "@type": "Organization", name: SITE.name, url: SITE.url }, publisher: { "@type": "Organization", name: SITE.name, logo: { "@type": "ImageObject", url: `${SITE.url}/favicon.svg` } } },
+      crumbs([["Home", "/"], ["Guides", "/guides"], [g.title]]),
+    ],
+    body: `<section class="pagehead"><div class="wrap"><p class="kicker"><a href="/guides">Buyer guides</a> · ${fmtDate(g.updated ?? g.published)}</p><h1 data-split>${esc(g.title)}</h1></div></section>
+<section class="wrap section prose guide"><p class="lead">${esc(g.excerpt)}</p>${renderMd(g.body, (p) => p)}${more.length ? `<h2>More guides</h2><ul>${more.map((x) => `<li><a href="/guides/${x.slug}">${esc(x.title)}</a></li>`).join("")}</ul>` : ""}<p><a class="btn" href="/signup">Sign up free to see trade prices →</a></p></section>`,
+  };
+}
