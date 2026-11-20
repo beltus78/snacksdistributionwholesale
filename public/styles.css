@@ -45,20 +45,20 @@ background:radial-gradient(circle at 85% 12%,var(--pat) 0 18%,transparent 18.5%)
 /* story hero — the sky turns from dawn to dusk as you scroll */
 .story{position:relative;height:calc(var(--n,5) * 100vh + 40vh);--p:0}
 .story-stage{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center}
-.scene{position:absolute;inset:0;pointer-events:none}
+.scene{position:absolute;inset:0;pointer-events:none;container-type:size}
 .sky{position:absolute;inset:0;background:linear-gradient(#F9DDB8,#F7E6CC 55%,var(--sand))}
 .sky::before,.sky::after{content:"";position:absolute;inset:0}
 .sky::before{background:linear-gradient(#A9D3E4,#DCEBEF 55%,var(--sand));opacity:calc(1 - (var(--p) - .3) * (var(--p) - .3) * 14)}
 .sky::after{background:linear-gradient(#F0A06B,#F6C79A 50%,#F4DDC4);opacity:calc((var(--p) - .62) * 3)}
-.sun{position:absolute;width:min(26vw,300px);aspect-ratio:1;border-radius:50%;left:calc(70% - var(--p) * 34%);
-top:calc(8% + (var(--p) - .5) * (var(--p) - .5) * 4 * 34vh);background:radial-gradient(circle at 40% 38%,#FFE29A,var(--sun) 55%,#E88A2A);box-shadow:0 0 120px 40px rgba(242,179,61,.35);opacity:.95}
+.sun{position:absolute;width:min(26vw,300px);aspect-ratio:1;border-radius:50%;left:70%;top:8%;will-change:translate;
+translate:calc(var(--p) * -34cqw) calc((var(--p) - .5) * (var(--p) - .5) * 4 * 34vh);background:radial-gradient(circle at 40% 38%,#FFE29A,var(--sun) 55%,#E88A2A);box-shadow:0 0 120px 40px rgba(242,179,61,.35);opacity:.95}
 .range{position:absolute;left:-4%;width:130%;max-width:none;bottom:0}
 .range.r3{height:36vh;fill:#D9A27A;transform:translateX(calc(var(--p) * -3%));opacity:.75}
 .range.r2{height:28vh;fill:var(--ochre);transform:translateX(calc(var(--p) * -6%))}
 .range.r1{height:18vh;fill:var(--gum);transform:translateX(calc(var(--p) * -9%))}
 .road{position:absolute;left:50%;bottom:0;width:min(60vw,760px);height:16vh;translate:-50% 0;background:#2A2520;clip-path:polygon(46% 0,54% 0,100% 100%,0 100%)}
 .road i{position:absolute;left:50%;top:0;bottom:0;width:6px;translate:-50% 0;background:repeating-linear-gradient(#F2B33D 0 18px,transparent 18px 40px);background-position:0 calc(var(--p) * 900px)}
-.truck{position:absolute;bottom:5vh;width:min(24vw,220px);left:calc((var(--p) - .74) * 400% - 25%);transition:none}
+.truck{position:absolute;bottom:5vh;width:min(24vw,220px);left:-25%;translate:calc((var(--p) - .74) * 400cqw) 0;will-change:translate;transition:none}
 .story-in{position:relative;width:100%;display:grid;grid-template-columns:44px 1.05fr .95fr;gap:36px;align-items:center;height:100%;padding-top:96px;padding-bottom:24vh}
 .story-dots{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;font:700 .72rem var(--sans);color:rgba(29,26,22,.3)}
 .story-dots li{position:relative;padding-left:14px;transition:color .3s}.story-dots li::before{content:"";position:absolute;left:0;top:50%;width:6px;height:2px;border-radius:2px;background:currentColor;transition:width .3s}

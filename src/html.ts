@@ -55,7 +55,7 @@ ${pg.noindex ? `<meta name="robots" content="noindex">` : `<link rel="canonical"
 ${ctx.gsc ? `<meta name="google-site-verification" content="${esc(ctx.gsc)}">` : ""}${ctx.bing ? `<meta name="msvalidate.01" content="${esc(ctx.bing)}">` : ""}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap">
-<link rel="stylesheet" href="/styles.css?v=2">
+<link rel="stylesheet" href="/styles.css?v=3">
 ${(pg.jsonLd ?? []).map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, "\\u003c")}</script>`).join("")}
 </head><body>
 <div class="util"><div class="wrap util-in"><span>Trade only · ABN required · Prices in AUD ex GST</span><span class="util-r">Delivering to every state &amp; territory · Min. ${MIN_CASES / 50} pallets</span></div></div>
