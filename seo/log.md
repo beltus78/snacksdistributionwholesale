@@ -13,3 +13,8 @@ Guides already published (don't repeat these topics):
 - Optional env var BING_SITE_VERIFICATION (GOOGLE_SITE_VERIFICATION already existed).
 - IndexNow key file: /2fdb2b6ee3092ca351f4f729bdbb6936.txt.
 - Open (needs Beltus): real company name, ABN, warehouse address and phone; terms governing state.
+
+## 2026-11-21 — on-page audit
+- Titles: suffix dropped when the full title would pass 65 chars; titles still over 65 are cut at a word boundary.
+- Meta descriptions: under 110 chars are padded with the site tagline; over 160 clipped at a word boundary.
+- Search Console: property verified (Cloudflare DNS) and sitemap submitted.

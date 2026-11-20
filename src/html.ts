@@ -38,12 +38,13 @@ export function productTile(ctx: Ctx, p: Product) {
   return `<a class="tile" href="/p/${p.slug}">${label(p, "m")}<span class="tile-name">${esc(p.name)}</span><span class="tile-meta">${esc(unitText(p))}</span>${ctx.buyer ? `<span class="tile-price">${esc(aud(p.price))} <small>ex GST</small></span>` : `<span class="tile-lock">Price after free signup</span>`}</a>`;
 }
 
+const fitTitle = (s: string) => (s.length <= 65 ? s : s.slice(0, 66).replace(/\s+\S*$/, "").replace(/[\s—–|,:-]+$/, ""));
 export function layout(ctx: Ctx, pg: Page) {
   const url = SITE.url + pg.path;
-  const title = pg.rawTitle || pg.title.includes(SITE.name) || pg.title.length + SITE.name.length + 3 > 65 ? pg.title : `${pg.title} | ${SITE.name}`;
+  const title = fitTitle(pg.rawTitle || pg.title.includes(SITE.name) || pg.title.length + SITE.name.length + 3 > 65 ? pg.title : `${pg.title} | ${SITE.name}`);
   const image = pg.image ?? `${SITE.url}/og-default.jpg`;
   // Meta description: max 160 chars, cut at a word boundary.
-  pg = { ...pg, description: pg.description.length <= 160 ? pg.description : pg.description.slice(0, 159).replace(/\s+\S*$/, "") + "…" };
+  { let d = pg.description; if (d.length < 110) d = `${d.replace(/\s*$/, "")}${/[.!?]$/.test(d) ? "" : "."} Imported snacks and drinks wholesale for Australian businesses.`; if (d.length > 160) d = d.slice(0, 159).replace(/\s+\S*$/, "") + "…"; pg = { ...pg, description: d }; }
   const nav: [string, string][] = [["/shop", "Shop"], ["/brands", "Brands"], ["/delivery", "Delivery"], ["/compliance", "Compliance"], ["/guides", "Guides"], ["/contact", "Contact"]];
   const b = ctx.buyer;
   return `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
