@@ -29,6 +29,8 @@ for r in rows:
     if b.lower() in ('ice', 'pop', 'super', 'sweet&sour') and len(t) > 1: b = t[0] + ' ' + t[1]
     r['brand'] = b
 def slugify(s): return re.sub(r'-+', '-', re.sub(r'[^a-z0-9]+', '-', s.lower().replace('&', ' and ').replace("'", ''))).strip('-')
+import os
+IMG = json.load(open('tools/images.json')) if os.path.exists('tools/images.json') else {}
 seen = collections.Counter(); out = []
 for r in sorted(rows, key=lambda r: (r['cat'], r['name'])):
     size = f"{r['size']}{r['unit']}" if r['size'] else ''
@@ -37,8 +39,8 @@ for r in sorted(rows, key=lambda r: (r['cat'], r['name'])):
     seen[base] += 1
     slug = base if seen[base] == 1 else f"{base}-{seen[base]}"
     energy = 1 if r['cat'] == 'Drinks' and re.search(r'ENERGY|MONSTER|RED BULL|\bC4\b|OXY SHRED|EL JEFE|KAMI ?KAZE|\bTNT\b|PRIME|BANG|CELSIUS|GHOST|REIGN', r['raw'], re.I) else 0
-    # [slug, name, category, size, units per case, case price AUD ex GST, brand, bulk?, energy?]
-    out.append([slug, r['name'], CAT[r['cat']], size, r['case_qty'], r['case_price'], r['brand'], 1 if r['case_note'].startswith('Bulk') else 0, energy])
+    # [slug, name, category, size, units per case, case price AUD ex GST, brand, bulk?, energy?, photo]
+    out.append([slug, r['name'], CAT[r['cat']], size, r['case_qty'], r['case_price'], r['brand'], 1 if r['case_note'].startswith('Bulk') else 0, energy, IMG.get(slug, '')])
 json.dump(out, open('src/data-products.json', 'w'), separators=(',', ':'), ensure_ascii=False)
 print(len(out), collections.Counter(o[2] for o in out))
 print(collections.Counter(o[6] for o in out).most_common(40))

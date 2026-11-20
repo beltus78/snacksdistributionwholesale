@@ -25,3 +25,9 @@ Resend → Domains → add the domain, add its DNS records in Cloudflare. Mailbo
 - Products: `src/data-products.json` built by `python3 tools/build_data.py tools/catalogue-review.json` from the review sheet (Include = Yes rows). Prices are estimates already cut by 25% — replace with real buy prices. No product photos yet: each product shows a designed label card (`label()` in `src/html.ts`).
 
 Change code, push to `main` (auto-deploy) or run `bash deploy.sh`. Live logs: `npx wrangler tail`.
+
+## Product photos
+603 of the 3,876 lines have photos in `public/products/<slug>.webp` (listed in `tools/images.json`); the rest show the designed label card.
+Code per product: `c…` = cut-out (background removed), `p…` = square photo; source `o` = own catalogue (exoticsnackswholesales.com), `f:<barcode>` = Open Food Facts (CC BY-SA 3.0 — credited on the product page and in the footer).
+Pipeline in `tools/photos/`: `harvest.py` (Open Food Facts by brand) → `harvest2.py` (per product) → `match.py` (strict brand + flavour + size match) → `fetch_images.py` (rembg cut-out, quality checks). Then `python3 tools/build_data.py tools/catalogue-review.json`.
+To add your own photos: save a square image as `public/products/<slug>.webp`, add `"<slug>": "po"` to `tools/images.json`, rebuild the data and push.

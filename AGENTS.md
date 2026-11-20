@@ -34,3 +34,9 @@ Change code, push to `main` (auto-deploy) or run `bash deploy.sh`. Live logs: `n
 - Sitemap lastmod: bump `CONTENT_UPDATED` in `src/index.ts` when site-wide content changes.
 - Log every SEO change in `seo/log.md`. IndexNow key: `2fdb2b6ee3092ca351f4f729bdbb6936` (file in `public/`).
 - Never: change order rules, payment limits, contact/company details or URLs; never invent statistics, reviews or regulatory claims.
+
+## Product photos
+603 of the 3,876 lines have photos in `public/products/<slug>.webp` (listed in `tools/images.json`); the rest show the designed label card.
+Code per product: `c…` = cut-out (background removed), `p…` = square photo; source `o` = own catalogue (exoticsnackswholesales.com), `f:<barcode>` = Open Food Facts (CC BY-SA 3.0 — credited on the product page and in the footer).
+Pipeline in `tools/photos/`: `harvest.py` (Open Food Facts by brand) → `harvest2.py` (per product) → `match.py` (strict brand + flavour + size match) → `fetch_images.py` (rembg cut-out, quality checks). Then `python3 tools/build_data.py tools/catalogue-review.json`.
+To add your own photos: save a square image as `public/products/<slug>.webp`, add `"<slug>": "po"` to `tools/images.json`, rebuild the data and push.

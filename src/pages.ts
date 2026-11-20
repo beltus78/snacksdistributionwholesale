@@ -23,7 +23,10 @@ const faq = (qa: [string, string][]) => ({
 });
 
 const byBrand = (cat: string, brands: string[]) =>
-  brands.map((b) => PRODUCTS.find((p) => p.cat === cat && p.brand.toLowerCase() === b.toLowerCase())).filter((p): p is Product => !!p);
+  brands.map((b) => {
+    const all = PRODUCTS.filter((p) => p.cat === cat && p.brand.toLowerCase() === b.toLowerCase());
+    return all.find((p) => p.img[0] === "c") ?? all.find((p) => p.img) ?? all[0]; // prefer a clean cut-out photo
+  }).filter((p): p is Product => !!p);
 
 const STORY = [
   { kicker: "Imported snacks · Australian stock", title: "The world's snacks, stocked in Australia.", text: `${fmtN(N)} lines of American, Asian and European snacks and drinks, dispatched from ${SITE.warehouse} to shops in every state and territory.`, pick: () => byBrand("lollies", ["Warheads", "Nerds", "Jolly Rancher", "Airheads"]), cta: true },
@@ -52,8 +55,16 @@ ${c.cta ? `<p class="links">${ctx.buyer ? `<a class="btn" href="/shop">Open the 
 </div><p class="story-hint" aria-hidden="true">Scroll ↓</p></div></section>`;
 }
 
+/** Up to n photographed products of a category, spread across brands. */
+export function catPhotos(slug: string, n = 4) {
+  const seen = new Set<string>(); const out: Product[] = [];
+  for (const p of PRODUCTS) if (p.cat === slug && p.img[0] === "c" && !seen.has(p.brand)) { seen.add(p.brand); out.push(p); if (out.length === n) break; }
+  return out;
+}
+const collage = (slug: string, n = 4) => `<span class="collage" aria-hidden="true">${catPhotos(slug, n).map((p) => `<img src="/products/${p.slug}.webp" alt="" loading="lazy" decoding="async" width="120" height="120">`).join("")}</span>`;
+
 function catIndex() {
-  return `<ol class="index" data-stagger>${CATEGORIES.map((c, i) => `<li><a href="/c/${c.slug}" class="ix-${c.hue}"><span class="ix-n">${String(i + 1).padStart(2, "0")}</span><span class="ix-t">${esc(c.name)}<small>${esc(c.line)}</small></span><span class="ix-c">${countByCat(c.slug)}</span></a></li>`).join("")}</ol>`;
+  return `<ol class="index" data-stagger>${CATEGORIES.map((c, i) => `<li><a href="/c/${c.slug}" class="ix-${c.hue}"><span class="ix-n">${String(i + 1).padStart(2, "0")}</span><span class="ix-t">${esc(c.name)}<small>${esc(c.line)}</small></span>${collage(c.slug, 3)}<span class="ix-c">${countByCat(c.slug)}</span></a></li>`).join("")}</ol>`;
 }
 
 function shelf(ctx: Ctx, title: string, items: Product[], more?: [string, string]) {
@@ -106,7 +117,7 @@ ${process()}
 <section class="dark"><div class="wrap sec"><p class="kicker">Why stores order from us</p><h2 class="h-xl" data-split>Imported range. Local stock. Straight answers.</h2><div class="why" data-stagger>${why.map(([a, b], i) => `<div><span class="num">0${i + 1}</span><h3>${esc(a)}</h3><p>${esc(b)}</p></div>`).join("")}</div></div></section>
 ${stateStrip()}
 ${signupBand(ctx)}
-${shelf(ctx, "Brands people ask for", BRANDS.slice(0, 18).map((b) => PRODUCTS.find((p) => p.brand === b.name)!).filter(Boolean), ["/brands", "All brands"])}`,
+${shelf(ctx, "Brands people ask for", BRANDS.slice(0, 18).map((b) => PRODUCTS.find((p) => p.brand === b.name && p.img[0] === "c") ?? PRODUCTS.find((p) => p.brand === b.name && p.img) ?? PRODUCTS.find((p) => p.brand === b.name)!).filter(Boolean), ["/brands", "All brands"])}`,
   };
 }
 
@@ -125,7 +136,9 @@ const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9 ]/g, " ");
 function listing(ctx: Ctx, base: string, h1: string, all: Product[], o: { intro?: string; cat?: string; title?: string; desc?: string; jsonLd?: object[]; allowSearch?: boolean } = {}): Page {
   const q = (ctx.url.searchParams.get("q") ?? "").trim().slice(0, 60);
   const words = o.allowSearch && q ? norm(q).split(/\s+/).filter(Boolean) : [];
-  const items = words.length ? all.filter((p) => { const h = norm(`${p.name} ${p.brand} ${p.size}`); return words.every((w) => h.includes(w)); }) : all;
+  const found = words.length ? all.filter((p) => { const h = norm(`${p.name} ${p.brand} ${p.size}`); return words.every((w) => h.includes(w)); }) : all;
+  const rank = (p: Product) => (p.img[0] === "c" ? 0 : p.img ? 1 : 2);
+  const items = [...found].sort((a, b) => rank(a) - rank(b)); // photographed lines first (stable sort keeps name order)
   const pages = Math.max(1, Math.ceil(items.length / PER_PAGE));
   const page = Math.min(pages, Math.max(1, parseInt(ctx.url.searchParams.get("page") ?? "1", 10) || 1));
   const slice = items.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -138,7 +151,7 @@ function listing(ctx: Ctx, base: string, h1: string, all: Product[], o: { intro?
 <aside class="side"><form action="/shop" role="search"><input type="search" name="q" value="${esc(q)}" placeholder="Search ${fmtN(N)} lines…" aria-label="Search products"></form>
 <nav class="side-nav"><a href="/shop"${!o.cat && base === "/shop" ? ' aria-current="page"' : ""}>All products <span>${fmtN(N)}</span></a>${CATEGORIES.map((c) => `<a href="/c/${c.slug}"${o.cat === c.slug ? ' aria-current="page"' : ""}><i class="dot dot-${c.hue}"></i>${esc(c.name)} <span>${countByCat(c.slug)}</span></a>`).join("")}<a href="/brands"${base === "/brands" ? ' aria-current="page"' : ""}>Shop by brand <span>${BRANDS.length}</span></a></nav>
 <div class="side-note small"><b>Minimum order</b> 5 pallets = ${MIN_CASES} mixed cartons.<br>Prices AUD ex GST. Freight quoted to your door.</div></aside>
-<div class="sheet-main"><header class="sheet-head"><h1 class="h-xl">${esc(q ? `“${q}”` : h1)}</h1>${o.intro && !q ? `<p class="muted">${esc(o.intro)}</p>` : ""}<p class="small muted">${fmtN(items.length)} products${pages > 1 ? ` · page ${page} of ${pages}` : ""}</p></header>
+<div class="sheet-main"><header class="sheet-head">${o.cat && !q ? `<div class="head-collage">${collage(o.cat, 5)}</div>` : ""}<h1 class="h-xl">${esc(q ? `“${q}”` : h1)}</h1>${o.intro && !q ? `<p class="muted">${esc(o.intro)}</p>` : ""}<p class="small muted">${fmtN(items.length)} products${pages > 1 ? ` · page ${page} of ${pages}` : ""}</p></header>
 ${ctx.buyer ? "" : `<div class="unlock"><span>Prices are for trade customers.</span><a class="btn btn-s" href="/signup?next=${encodeURIComponent(path)}">Sign up free — instant access</a><a class="ul" href="/login?next=${encodeURIComponent(path)}">Log in</a></div>`}
 ${slice.length ? `<ul class="rows">${slice.map((p) => productRow(ctx, p)).join("")}</ul>` : `<p class="empty">Nothing matches “${esc(q)}”. Try a brand name like Takis or Arizona.</p>`}
 ${pager(base, page, pages, q)}</div></section>`,
@@ -217,13 +230,14 @@ export function product(ctx: Ctx, slug: string): Page | null {
   ].filter(Boolean);
   const path = `/p/${p.slug}`;
   return {
-    path, title: `${p.name}${p.size ? ` ${p.size}` : ""} Wholesale Australia`, description: `${desc[0]} ${desc[1]}`.slice(0, 160),
+    path, title: `${p.name}${p.size ? ` ${p.size}` : ""} Wholesale Australia`, image: p.img ? `${SITE.url}/products/${p.slug}.webp` : undefined, description: `${desc[0]} ${desc[1]}`.slice(0, 160),
     jsonLd: [{
       "@context": "https://schema.org", "@type": "Product", name: p.name, sku: p.slug, category: c.name, description: desc.join(" "),
+      ...(p.img ? { image: `${SITE.url}/products/${p.slug}.webp` } : {}),
       ...(p.brand ? { brand: { "@type": "Brand", name: p.brand } } : {}), ...(p.size ? { size: p.size } : {}),
     }, crumbs([["Home", "/"], [c.name, `/c/${c.slug}`], [p.name]])],
     body: `<section class="wrap pdp">
-<div class="pdp-media" data-reveal="left">${label(p, "l")}</div>
+<div class="pdp-media" data-reveal="left">${label(p, "l")}${p.img.slice(1).startsWith("f:") ? `<p class="credit">Photo: <a href="https://world.openfoodfacts.org/product/${esc(p.img.slice(3))}" rel="nofollow">Open Food Facts</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/3.0/" rel="nofollow">CC BY-SA 3.0</a>. Packaging may differ from the photo.</p>` : ""}</div>
 <div class="pdp-info" data-reveal="right"><nav class="crumbs"><a href="/shop">Shop</a> / <a href="/c/${c.slug}">${esc(c.name)}</a>${p.brand && BRAND.has(brandSlugOf(p)) ? ` / <a href="/brand/${brandSlugOf(p)}">${esc(p.brand)}</a>` : ""}</nav>
 <p class="kicker">${esc(p.brand || c.name)}</p><h1 class="h-xl">${esc(p.name)}${p.size ? ` <span class="sz">${esc(p.size)}</span>` : ""}</h1>
 ${ctx.buyer ? `<p class="price"><span>From</span> <strong>${esc(aud(p.price))}</strong> <span>per ${p.bulk ? "bag/tub" : "carton"} · ex GST</span></p>

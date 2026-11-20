@@ -18,6 +18,8 @@ export const SITE = {
 export type Product = {
   slug: string; name: string; cat: CategorySlug; size: string; perCase: number; price: number;
   brand: string; bulk: boolean; energy: boolean; i: number;
+  /** Photo: "" none (label card). Otherwise "c" (cut-out) or "p" (square photo) + source: "o" own catalogue, "f:<barcode>" Open Food Facts (CC BY-SA, credited). */
+  img: string;
 };
 
 export const CATEGORIES = [
@@ -34,9 +36,9 @@ export const CATEGORIES = [
 export type CategorySlug = (typeof CATEGORIES)[number]["slug"];
 export const CAT = new Map(CATEGORIES.map((c) => [c.slug, c]));
 
-type Row = [string, string, CategorySlug, string, number, number, string, number, number];
+type Row = [string, string, CategorySlug, string, number, number, string, number, number, string?];
 export const PRODUCTS: Product[] = (DATA as unknown as Row[]).map((r, i) => ({
-  slug: r[0], name: r[1], cat: r[2], size: r[3], perCase: r[4], price: r[5], brand: r[6], bulk: !!r[7], energy: !!r[8], i,
+  slug: r[0], name: r[1], cat: r[2], size: r[3], perCase: r[4], price: r[5], brand: r[6], bulk: !!r[7], energy: !!r[8], i, img: r[9] ?? "",
 }))
   .sort((a, b) => CATEGORIES.findIndex((c) => c.slug === a.cat) - CATEGORIES.findIndex((c) => c.slug === b.cat) || a.name.localeCompare(b.name))
   .map((p, i) => ({ ...p, i }));
