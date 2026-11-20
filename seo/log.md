@@ -18,3 +18,7 @@ Guides already published (don't repeat these topics):
 - Titles: suffix dropped when the full title would pass 65 chars; titles still over 65 are cut at a word boundary.
 - Meta descriptions: under 110 chars are padded with the site tagline; over 160 clipped at a word boundary.
 - Search Console: property verified (Cloudflare DNS) and sitemap submitted.
+
+## 2026-11-21 — daily health check
+- Local crawl clean (200s, one h1, titles ≤65, descriptions 110–160, canonical/hreflang/og/JSON-LD, internal links and images, robots, sitemaps). No fixes needed.
+- IndexNow: full sitemap submitted 2026-11-21 (4099 URLs, HTTP 200).
