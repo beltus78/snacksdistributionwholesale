@@ -40,3 +40,7 @@ Change code, push to `main` (auto-deploy) or run `bash deploy.sh`. Live logs: `n
 Code per product: `c…` = cut-out (background removed), `p…` = square photo; source `o` = own catalogue (exoticsnackswholesales.com), `f:<barcode>` = Open Food Facts (CC BY-SA 3.0 — credited on the product page and in the footer).
 Pipeline in `tools/photos/`: `harvest.py` (Open Food Facts by brand) → `harvest2.py` (per product) → `match.py` (strict brand + flavour + size match) → `fetch_images.py` (rembg cut-out, quality checks). Then `python3 tools/build_data.py tools/catalogue-review.json`.
 To add your own photos: save a square image as `public/products/<slug>.webp`, add `"<slug>": "po"` to `tools/images.json`, rebuild the data and push.
+
+## Google Ads
+Account Food & Snow Paradise (837-914-9276), tag `AW-18298465750` (shared with the other snacks sites). Code: `src/ads.ts`.
+Conversions fire in `public/app.js`: "Snacks - Sign-up" after a successful `/api/signup`, "Snacks - Quote request" after `/api/order` (transaction_id = order number). Privacy page mentions Google Ads.

@@ -1,4 +1,5 @@
 import { CAT, CATEGORIES, MIN_CASES, SITE, STATES, aud, unitText, type Product } from "./catalog";
+import { adsHead } from "./ads";
 import type { Buyer } from "./auth";
 
 export const esc = (v: unknown) =>
@@ -50,6 +51,7 @@ export function layout(ctx: Ctx, pg: Page) {
   const nav: [string, string][] = [["/shop", "Shop"], ["/brands", "Brands"], ["/delivery", "Delivery"], ["/compliance", "Compliance"], ["/guides", "Guides"], ["/contact", "Contact"]];
   const b = ctx.buyer;
   return `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+${adsHead()}
 <title>${esc(title)}</title><meta name="description" content="${esc(pg.description)}">
 ${pg.noindex ? `<meta name="robots" content="noindex">` : `<link rel="canonical" href="${url}"><link rel="alternate" hreflang="en-AU" href="${url}"><link rel="alternate" hreflang="x-default" href="${url}">`}
 <meta name="geo.region" content="AU"><meta property="og:site_name" content="${SITE.name}"><meta property="og:type" content="${pg.ogType ?? "website"}"><meta property="og:locale" content="en_AU">
@@ -79,7 +81,7 @@ ${pg.hideBar || !b ? "" : `<div class="bar" data-bar hidden><div class="wrap bar
 <div><h4>Company</h4><a href="/about">About</a><a href="/delivery">Delivery &amp; freight</a><a href="/compliance">Food compliance</a><a href="/how-to-order">How to order</a><a href="/guides">Buyer guides</a><a href="/contact">Contact</a><a href="/terms">Terms of trade</a><a href="/privacy">Privacy</a></div>
 </div><p class="small ft-copy">© ${new Date().getUTCFullYear()} ${SITE.name}. Wholesale to registered Australian businesses only. All prices AUD excluding GST. Some product photos: <a href="https://world.openfoodfacts.org" rel="nofollow">Open Food Facts</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/3.0/" rel="nofollow">CC BY-SA 3.0</a>. Brand names and packaging belong to their owners.</p></div></footer>
 <script>window.__MIN=${MIN_CASES};window.__IN=${b ? 1 : 0};${pg.scriptData ? `window.__D=${JSON.stringify(pg.scriptData).replace(/</g, "\\u003c")};` : ""}</script>
-<script src="/app.js?v=1" defer></script><script src="/motion.js?v=1" defer></script>
+<script src="/app.js?v=2" defer></script><script src="/motion.js?v=1" defer></script>
 ${ctx.turnstile && /signup|contact|cart/.test(pg.path) ? `<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>` : ""}
 ${ctx.beacon ? `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"${esc(ctx.beacon)}"}'></script>` : ""}
 </body></html>`;

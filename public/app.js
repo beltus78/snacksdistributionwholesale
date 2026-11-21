@@ -78,7 +78,8 @@
       $("[data-error]", form).hidden = true; btn.disabled = true; btn.textContent = "One moment…";
       post("/api/" + form.dataset.auth, formBody(form)).then(function (r) {
         if (!r.ok) return fail(form, btn, label, r.error);
-        location.href = form.dataset.next || "/shop";
+        var go = function () { location.href = form.dataset.next || "/shop"; };
+        if (form.dataset.auth === "signup") adsConv("signup", "", go); else go();
       }).catch(function () { fail(form, btn, label); });
     });
   });
@@ -128,7 +129,7 @@
       $("[data-error]", form).hidden = true; btn.disabled = true; btn.textContent = "Sending…";
       post("/api/order", body).then(function (r) {
         if (!r.ok) return fail(form, btn, label, r.error);
-        put(KEY, {}); location.href = "/thanks?n=" + encodeURIComponent(r.orderNumber);
+        put(KEY, {}); adsConv("quote", r.orderNumber, function () { location.href = "/thanks?n=" + encodeURIComponent(r.orderNumber); });
       }).catch(function () { fail(form, btn, label); });
     });
   }
@@ -144,4 +145,16 @@
       cf.innerHTML = '<p class="good big">✓ Thanks — we\'ll reply within one business day.</p>';
     }).catch(function () { fail(cf, btn, label); });
   });
+
+  // Google Ads conversion (see src/ads.ts); waits up to 1s for the hit, then carries on.
+  function adsConv(kind, id, done) {
+    var called = false, next = function () { if (!called) { called = true; done(); } };
+    try {
+      if (window.gtag && window.__ADS) {
+        var p = { send_to: __ADS.id + "/" + __ADS[kind], event_callback: next };
+        if (id) p.transaction_id = id;
+        gtag("event", "conversion", p); setTimeout(next, 1000);
+      } else next();
+    } catch (e) { next(); }
+  }
 })();

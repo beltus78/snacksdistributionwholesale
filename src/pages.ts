@@ -384,7 +384,7 @@ export const terms = () => textPage("/terms", "Terms of trade", "Legal", [
 export const privacy = () => textPage("/privacy", "Privacy policy", "Legal", [
   `${SITE.company} handles personal information under the Privacy Act 1988 (Cth) and the Australian Privacy Principles.`,
   "We collect what you give us in the signup, order and contact forms — name, business name, ABN, email, phone, delivery address and order details — to run your trade account, answer you and fulfil orders. We keep tax records for as long as the law requires.",
-  "Our website runs on Cloudflare and emails are sent through Resend; both may process data outside Australia. We use one login cookie and one local list for your quote cart. We don't use advertising cookies.",
+  "Our website runs on Cloudflare and emails are sent through Resend; both may process data outside Australia. We use one login cookie and one local list for your quote cart. We also use Google Ads (Google LLC) to show ads and to measure whether a visit from an ad leads to a trade signup or order; Google may set cookies for this and process the data outside Australia. You can block these cookies in your browser or opt out of personalised ads at adssettings.google.com.",
   `To access or correct your information, or to make a complaint, email ${SITE.email}. If you're not satisfied with our answer you can contact the Office of the Australian Information Commissioner (oaic.gov.au).`,
 ], { noindex: true });
 
