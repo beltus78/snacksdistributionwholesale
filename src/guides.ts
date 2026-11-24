@@ -148,6 +148,91 @@ Stores in capital cities usually receive pallets fastest, while regional areas, 
 
 [Sign up free](/signup) with your ABN to see trade prices, then build your range from the full [order sheet](/shop). New to wholesale buying? Read [how to buy imported snacks wholesale in Australia](/guides/how-to-buy-imported-snacks-wholesale-australia) or [contact us](/contact).`,
   },
+  {
+    slug: "christmas-summer-stock-imported-snacks-australian-retailers",
+    title: "Christmas and Summer Holiday Stock: An Imported Snacks Buying Guide for Australian Retailers",
+    seoTitle: "Christmas Snack Stock for Australian Retailers: Buying Guide",
+    description: "Plan Christmas and summer holiday stock of imported lollies, chocolate, chips and drinks: heat-safe ranging, timing, freight over the break and display ideas.",
+    excerpt: "An Australian Christmas is a summer Christmas. Here is how servos, milk bars, lolly shops and convenience stores can plan imported snack stock for the busiest — and hottest — stretch of the year.",
+    published: "2026-11-24",
+    body: `In much of the world, Christmas snacks mean chocolate by the fire. In Australia it means a hot shop, a long run of public holidays and the summer school holidays all landing at once. For servos, milk bars, lolly shops, convenience stores and gift shops, late November to the end of January is one long trading season — and imported snacks are one of the easiest ways to give it a lift.
+
+This guide covers how to plan your range, when to order, how to look after stock in the heat and how to keep shelves full while freight slows down over the break.
+
+## Three peaks, not one
+
+It helps to think of the season as three overlapping peaks:
+
+1. **Gifting (late November to Christmas Eve).** Shoppers want stocking fillers, Secret Santa gifts and treats for teachers, colleagues and visitors. Novelty, colourful and "you can't get this at the supermarket" products do best.
+2. **Entertaining (Christmas to New Year).** Bigger packs, chips, lollies to share and drinks for barbecues, cricket and the beach.
+3. **Summer holidays (January).** Families on the road and kids at home: cold drinks, chips and grab-and-go lollies through servos, holiday towns and tourist strips.
+
+Plan stock for all three rather than one Christmas order, and your shelves won't empty in the week before Christmas only to sit full of the wrong things in January.
+
+## Ranging for a summer Christmas
+
+### Lollies and novelty
+
+[Lollies](/c/lollies) are the safest bet for summer: most travel well in warm weather and work for both gifting and holiday grazing. Sour, chewy and gummy lines from overseas give stocking fillers and pick-and-mix displays something different. [Novelty](/c/novelty) products — candy toys, dispensers, bright packaging — are made for gifting and sit well at the counter.
+
+### Chocolate: buy it, but plan for heat
+
+Imported [chocolate](/c/chocolate) sells strongly before Christmas, but it is the category most affected by an Australian summer. A few practical rules:
+
+- Order chocolate early in the season and plan to sell most of it before Christmas, rather than holding large amounts into January.
+- Store it somewhere cool, away from shopfront windows, fridge exhaust air and hot back rooms.
+- Keep chocolate away from the front of the shop on hot days; put lollies and chips in the sunniest spots instead.
+- Check every carton on arrival and before it goes on the shelf for bloom or soft packs.
+
+If your shop has no air conditioning, lean your range towards lollies, chips, biscuits and drinks.
+
+### Chips and biscuits
+
+Imported [chips](/c/chips) in flavours not found in Australian supermarkets sell for parties and road trips, and they cope with warm weather better than chocolate. [Biscuits](/c/biscuits) and pantry treats fill gift baskets and hampers.
+
+### Drinks
+
+[Drinks](/c/drinks) carry the summer: imported soft drinks and novelty flavours sell in fridges all through January. Energy drinks are popular too, but caffeine limits and labelling rules apply in Australia — our [compliance page](/compliance) explains how we handle the Food Standards Code, and our guide to the [imported snack range for a convenience store](/guides/imported-snack-range-australian-convenience-store) goes further into ranging drinks.
+
+## Timing your orders
+
+Christmas is not the time to discover that a pallet is still on the road. Work backwards from your peak:
+
+- **Gifting stock** should be on the shelf by early December at the latest.
+- **Entertaining and holiday stock** should arrive before Christmas, because many carriers run reduced services between Christmas Day and New Year, and regional and remote deliveries can take longer.
+- **January top-ups** are best ordered before the break if you can hold the stock, rather than relying on a delivery in the first week of January.
+
+Delivery times differ between capital cities, regional towns and remote areas such as the Northern Territory, northern Western Australia and Tasmania. Check our [delivery page](/delivery) and plan extra time if you are outside a capital city. State pages such as [Queensland](/wholesale/queensland), [Western Australia](/wholesale/western-australia) and [Northern Territory](/wholesale/northern-territory) have more on delivery to each area.
+
+## Using a full order well
+
+Our minimum order is five pallets of mixed cartons, so it pays to plan one well-balanced order instead of several small ones. A seasonal order might mix:
+
+- lollies and novelty for gifting and the counter;
+- chocolate sized to what you can sell before Christmas;
+- chips and biscuits for entertaining;
+- drinks for the fridge through January.
+
+Smaller shops sometimes split an order with another local business — a servo and a milk bar, or two lolly shops in different towns — so each gets a varied range. Just agree in advance who receives the delivery and how the stock is split.
+
+## Display ideas that sell imported snacks
+
+- **A "from overseas" end cap or table** near the entrance, refreshed weekly.
+- **Price-pointed stocking filler bins** near the counter. Set your own prices by margin; shoppers like quick choices.
+- **Hamper and gift basket builds** using biscuits, lollies, chocolate and drinks, ready-made for last-minute buyers.
+- **Cold-drink fridge facings** for imported drinks at eye level, especially from Boxing Day onwards.
+- **Holiday-town range shifts** in January: more drinks and chips, smaller chocolate facings.
+
+## Labels and compliance
+
+Food sold in Australia must meet the Australia New Zealand Food Standards Code, including English labelling and an Australian importer or supplier's details. Lines on our order sheet are lines already traded in Australia, and before they go into a quote we check for an English label with Australian importer details, an allergen declaration and country-of-origin information — the [compliance page](/compliance) has the details. As the retailer, you're still responsible for how products are stored, displayed and priced in your shop. As always, follow storage directions and best-before dates on each product.
+
+## Get your seasonal order in
+
+[Sign up free with your ABN](/signup) to see trade prices, then build your Christmas and summer order from the full [order sheet](/shop). New to ordering with us? Our guide on [how to buy imported snacks wholesale in Australia](/guides/how-to-buy-imported-snacks-wholesale-australia) walks through cartons, pallets, GST and payment.
+
+*General information only — not legal or food-safety advice.*`,
+  },
 ];
 
 export const GUIDE_BY = new Map(GUIDES.map((g) => [g.slug, g]));
