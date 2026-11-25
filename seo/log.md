@@ -31,3 +31,11 @@ Guides already published (don't repeat these topics):
 - Search Console: sc-domain:snacksdistributionwholesale.com is not yet available in Windsor.ai — topic chosen from keyword research.
 - Next ideas: vending machine snacks guide, lolly shop / pick-and-mix range, school holidays & Easter (order by Feb), FSANZ labelling explainer for imported lollies, Perth/WA freight guide, strengthen /wholesale/nsw copy once Search Console shows demand.
 
+
+## 2026-11-25 — Product brand clean-up (owner approved)
+**Why:** brands are guessed from the first word(s) of each product name by tools/build_data.py, so many products had wrong brands in the Product schema, on product pages and on brand pages (e.g. "3D Pineapple Gummy" → "Pineapple", "Sour Patch Kids" → "Patch Kids", "Swedish Fish" → "Fish", "Super Shark Gummy" → "Super Shark", whole /brand/ pages for "Candy", "Jelly", "Gummy", "Red", "Fruit").
+**Done:**
+- New tools/brand-fixes.json, applied by build_data.py after the guess: name patterns that set the real brand (Sour Patch Kids, Swedish Fish, Big League Chew, Baby Star, Fruit by the Foot, Cookie Dough Bites, Kool-Aid, Reese's, Smucker's, Life Savers, Warheads, M&M's, Meiji, Cadbury, Goldfish, Lay's…), merges of misspelt duplicates, and generic words cleared to no brand (never guessed). 878 of 3,876 products changed brand only; names, slugs, prices and categories are unchanged. 558 products now have no brand (was 200).
+- Brand pages (6+ lines): 170 → 152. The 40 old brand URLs that disappeared 301 to the corrected brand page (e.g. /brand/patch-kids → /brand/sour-patch-kids, /brand/meiji-hello → /brand/meiji) or, for junk ones, to their main category (e.g. /brand/candy → /c/lollies). Map: `BRAND_REDIRECTS` in src/catalog.ts, applied in src/index.ts. 22 new brand pages (e.g. /brand/sour-patch-kids, /brand/swedish-fish, /brand/big-league-chew).
+- CONTENT_UPDATED bumped to 2026-11-25.
+**Checked:** `npm run check` OK; local crawl of 406 sitemap URLs incl. all 152 brand pages (all 200, no broken links, titles/descriptions/canonicals OK); old brand URLs return 301.

@@ -28,6 +28,17 @@ for r in rows:
     if b.endswith('&') and len(t) > 2: b = ' '.join(t[:3])
     if b.lower() in ('ice', 'pop', 'super', 'sweet&sour') and len(t) > 1: b = t[0] + ' ' + t[1]
     r['brand'] = b
+# Manual brand corrections (tools/brand-fixes.json): known brands from the name, junk guesses cleared.
+import os
+FIX = json.load(open('tools/brand-fixes.json')) if os.path.exists('tools/brand-fixes.json') else {'match': [], 'rename': {}, 'rename_prefix': {}}
+for r in rows:
+    m = next((b for pat, b in FIX['match'] if re.search(pat, r['name'], re.I)), None)
+    if m is not None: r['brand'] = m; continue
+    b = r['brand']
+    if b in FIX['rename']: b = FIX['rename'][b]
+    for pre, to in FIX.get('rename_prefix', {}).items():
+        if b.startswith(pre): b = to
+    r['brand'] = b
 def slugify(s): return re.sub(r'-+', '-', re.sub(r'[^a-z0-9]+', '-', s.lower().replace('&', ' and ').replace("'", ''))).strip('-')
 import os
 IMG = json.load(open('tools/images.json')) if os.path.exists('tools/images.json') else {}

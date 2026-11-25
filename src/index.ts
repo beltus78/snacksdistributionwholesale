@@ -1,4 +1,4 @@
-import { BRANDS, BY_SLUG, CATEGORIES, CITIES, MAX_PAY_DAYS, MIN_CASES, PAYID_MAX, PAYPAL_MAX, PAY_NAMES, PAYMENT_METHODS, PRODUCTS, SITE, STATES, STATE_CODES, allowedPayments, aud, type PaymentMethod } from "./catalog";
+import { BRAND_REDIRECTS, BRANDS, BY_SLUG, CATEGORIES, CITIES, MAX_PAY_DAYS, MIN_CASES, PAYID_MAX, PAYPAL_MAX, PAY_NAMES, PAYMENT_METHODS, PRODUCTS, SITE, STATES, STATE_CODES, allowedPayments, aud, type PaymentMethod } from "./catalog";
 import { checkPassword, clearCookie, createSession, currentBuyer, endSession, formatAbn, hashPassword, validAbn, type Buyer } from "./auth";
 import { esc, layout, type Ctx, type Page } from "./html";
 import * as P from "./pages";
@@ -25,6 +25,8 @@ export default {
     const url = new URL(req.url);
     if (url.hostname.startsWith("www.")) { url.hostname = url.hostname.slice(4); return Response.redirect(url.toString(), 301); }
     const path = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, "") : "/";
+    const oldBrand = path.match(/^\/brand\/([a-z0-9-]+)$/)?.[1];
+    if (oldBrand && BRAND_REDIRECTS[oldBrand]) return Response.redirect(new URL(BRAND_REDIRECTS[oldBrand]!, url).toString(), 301);
 
     if (req.method === "POST") {
       if (path === "/api/signup") return signupApi(req, env);
@@ -82,7 +84,7 @@ function route(ctx: Ctx, path: string): Page | null {
 }
 
 // Bump when site-wide page content changes (lastmod must be truthful or Google ignores it).
-const CONTENT_UPDATED = "2026-11-20";
+const CONTENT_UPDATED = "2026-11-25";
 function sitemap() {
   const today = CONTENT_UPDATED;
   const paths = ["/", "/shop", "/brands", "/delivery", "/compliance", "/about", "/how-to-order", "/contact", "/signup",

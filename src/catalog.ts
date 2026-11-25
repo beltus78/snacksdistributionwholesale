@@ -54,6 +54,50 @@ export const BRANDS = (() => {
 })();
 export const BRAND = new Map(BRANDS.map((b) => [b.slug, b]));
 
+/** Old brand pages removed by the 2026-11-25 brand clean-up (tools/brand-fixes.json): 301 to the right brand or category. */
+export const BRAND_REDIRECTS: Record<string, string> = {
+  "amos-4d": "/brand/amos",
+  "baby": "/c/chips",
+  "bang": "/c/lollies",
+  "barnetts-mega": "/brand/barnetts",
+  "bigs-sunflower": "/brand/bigs",
+  "boylan-soda": "/brand/boylan",
+  "bubble": "/c/gum-mints",
+  "c-show": "/c/lollies",
+  "candy": "/c/lollies",
+  "cinnamon-toast": "/brand/cinnamon-toast-crunch",
+  "david-sunflower": "/brand/david",
+  "fish": "/brand/swedish-fish",
+  "fizzy": "/c/lollies",
+  "fresha-bulk": "/brand/fresha",
+  "fruit": "/c/lollies",
+  "goetez-cow": "/brand/goetzes",
+  "gold-fish": "/brand/goldfish",
+  "gummy": "/c/lollies",
+  "jelly": "/c/lollies",
+  "juicy": "/brand/juicy-drop",
+  "league": "/brand/big-league-chew",
+  "licorice": "/c/lollies",
+  "lifesavers": "/brand/life-savers",
+  "lolly": "/brand/big-lolly",
+  "marshmallow": "/c/lollies",
+  "meiji-hello": "/brand/meiji",
+  "nippys-iced": "/brand/nippys",
+  "okf-sparkling": "/brand/okf",
+  "patch-kids": "/brand/sour-patch-kids",
+  "puchao-gummy": "/brand/puchao",
+  "punch": "/brand/sour-punch",
+  "red": "/c/lollies",
+  "s-marke": "/c/lollies",
+  "smuckerss": "/brand/smuckers",
+  "stringy-gummy": "/c/lollies",
+  "super-gummy": "/c/lollies",
+  "sweet-and-sour-sour": "/c/lollies",
+  "tnt-sour": "/brand/tnt",
+  "turkish-delight": "/c/chocolate",
+  "warhead": "/brand/warheads",
+};
+
 // ---------- order rules (shared with public/app.js) ----------
 export const CASES_PER_PALLET = 50;
 export const MIN_PALLETS = 5;
